@@ -1,0 +1,38 @@
+:root {
+  --bg: #0B0F14;
+  --bg-raised: #0D1319;
+  --bg-card: #101820;
+  --bg-card-alt: #121C24;
+  --border: #1C2732;
+  --border-strong: #223140;
+  --text: #DCE6EE;
+  --text-dim: #9FB0BF;
+  --text-dimmer: #7C8FA0;
+  --text-faint: #5E7284;
+  --text-faintest: #45566A;
+  --accent: #3FC6D9;
+  --green: #3FB27F;
+  --amber: #E5A93B;
+  --red: #D9647A;
+  --purple: #6E56CF;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+}
+
+.mono { font-family: 'JetBrains Mono', monospace; }
+.display { font-family: 'Space Grotesk', sans-serif; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
