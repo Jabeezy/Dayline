@@ -5,7 +5,7 @@ import Tasks from '../components/Tasks.jsx';
 import QuickCapture from '../components/QuickCapture.jsx';
 import AddEvent from '../components/AddEvent.jsx';
 import ComingSoon from '../components/ComingSoon.jsx';
-import { fetchTodayEvents, googleConnectUrl } from '../lib/api.js';
+import { fetchTodayEvents, fetchUpcomingEvents, googleConnectUrl } from '../lib/api.js';
 
 const today = new Date().toLocaleDateString(undefined, {
   weekday: 'long', month: 'long', day: 'numeric',
@@ -14,15 +14,25 @@ const today = new Date().toLocaleDateString(undefined, {
 export default function Dashboard() {
   const [activeView, setActiveView] = useState('today');
   const [connected, setConnected] = useState(false);
-  const [events, setEvents] = useState([]);
+
+  // Today's agenda (used on the Today tab) and the wider upcoming list
+  // (used on the Calendar tab) are genuinely different queries — kept
+  // as separate state so adding an event for next week doesn't wrongly
+  // appear to vanish just because it's not part of "today."
+  const [todayEvents, setTodayEvents] = useState([]);
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await fetchTodayEvents();
-      setConnected(data.connected);
-      setEvents(data.events);
+      const [todayData, upcomingData] = await Promise.all([
+        fetchTodayEvents(),
+        fetchUpcomingEvents(30),
+      ]);
+      setConnected(todayData.connected);
+      setTodayEvents(todayData.events);
+      setUpcomingEvents(upcomingData.events);
     } finally {
       setLoading(false);
     }
@@ -61,7 +71,7 @@ export default function Dashboard() {
 
         {activeView === 'today' && (
           <div style={{ flex: 1, display: 'flex', gap: 20, padding: '0 32px 24px', minHeight: 0 }}>
-            <Agenda connected={connected} events={events} onConnect={handleConnect} onDeleted={load} loading={loading} />
+            <Agenda connected={connected} events={todayEvents} onConnect={handleConnect} onDeleted={load} loading={loading} />
             <Tasks />
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 16, minWidth: 0 }}>
               <QuickCapture connected={connected} onCaptured={load} />
@@ -82,7 +92,15 @@ export default function Dashboard() {
           <div style={{ flex: 1, display: 'flex', padding: '0 32px 24px', minHeight: 0 }}>
             <div style={{ width: '100%', maxWidth: 480, display: 'flex', flexDirection: 'column' }}>
               <AddEvent connected={connected} onCreated={load} />
-              <Agenda connected={connected} events={events} onConnect={handleConnect} onDeleted={load} loading={loading} />
+              <Agenda
+                connected={connected}
+                events={upcomingEvents}
+                onConnect={handleConnect}
+                onDeleted={load}
+                loading={loading}
+                showDates
+                emptyLabel="Nothing coming up in the next 30 days."
+              />
             </div>
           </div>
         )}

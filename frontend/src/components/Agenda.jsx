@@ -8,7 +8,16 @@ function formatTime(iso) {
   return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }).toLowerCase().replace(' ', '');
 }
 
-export default function Agenda({ connected, events, onConnect, onDeleted, loading }) {
+function formatDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d)) return '';
+  return d.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+}
+
+// showDates: true for a multi-day list (Calendar tab) so events on
+// different days are distinguishable, not just their time of day.
+export default function Agenda({ connected, events, onConnect, onDeleted, loading, showDates = false, emptyLabel = 'Nothing on the calendar today.' }) {
   const [deletingId, setDeletingId] = useState(null);
 
   async function handleDelete(id) {
@@ -38,7 +47,7 @@ export default function Agenda({ connected, events, onConnect, onDeleted, loadin
           padding: '18px 14px', display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'flex-start',
         }}>
           <div style={{ fontSize: 12, color: 'var(--text-dimmer)', lineHeight: 1.5 }}>
-            Connect Google Calendar to see today's real agenda here.
+            Connect Google Calendar to see your real agenda here.
           </div>
           <button onClick={onConnect} style={{
             background: 'var(--accent)', color: '#04141a', border: 'none', borderRadius: 8,
@@ -54,12 +63,13 @@ export default function Agenda({ connected, events, onConnect, onDeleted, loadin
       {connected && !loading && (
         <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 8 }}>
           {events.length === 0 && (
-            <div style={{ fontSize: 12, color: 'var(--text-faint)' }}>Nothing on the calendar today.</div>
+            <div style={{ fontSize: 12, color: 'var(--text-faint)' }}>{emptyLabel}</div>
           )}
           {events.map((ev) => (
             <div key={ev.id} style={{ display: 'flex', gap: 10, opacity: deletingId === ev.id ? 0.4 : 1 }}>
-              <div className="mono" style={{ fontSize: 11, color: 'var(--text-faintest)', width: 44, flexShrink: 0, paddingTop: 10 }}>
-                {formatTime(ev.start)}
+              <div className="mono" style={{ fontSize: 11, color: 'var(--text-faintest)', width: 54, flexShrink: 0, paddingTop: 10, lineHeight: 1.4 }}>
+                {showDates && <div>{formatDate(ev.start)}</div>}
+                <div>{formatTime(ev.start)}</div>
               </div>
               <div style={{
                 flex: 1, background: 'var(--bg-card-alt)', borderLeft: '3px solid var(--accent)',
