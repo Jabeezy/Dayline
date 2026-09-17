@@ -36,3 +36,50 @@ button {
   font-family: inherit;
   cursor: pointer;
 }
+
+/* --- Responsive layout --- */
+
+.dl-menu-btn { display: none; }
+.dl-overlay { display: none; }
+
+@media (max-width: 860px) {
+  .dl-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+    box-shadow: 20px 0 40px rgba(0, 0, 0, 0.5);
+  }
+  .dl-sidebar.open {
+    transform: translateX(0);
+  }
+  .dl-menu-btn {
+    display: flex;
+  }
+  .dl-overlay.open {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 40;
+  }
+  .dl-columns {
+    flex-direction: column !important;
+  }
+  .dl-columns > * {
+    width: 100% !important;
+    flex-shrink: 1 !important;
+  }
+  .dl-header {
+    padding: 16px 16px 12px !important;
+  }
+  .dl-content-pad {
+    padding: 0 16px 16px !important;
+  }
+  .dl-greeting {
+    font-size: 20px !important;
+  }
+}
