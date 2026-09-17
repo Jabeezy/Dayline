@@ -10,7 +10,10 @@ calendarRouter.get('/today', async (req, res) => {
   if (!tokens) return res.status(401).json({ error: 'Google Calendar not connected' });
 
   try {
-    const events = await listEvents(tokens);
+    // Frontend sends its own local start/end-of-day so "today" matches the
+    // user's actual timezone, not the server's (Railway runs in UTC).
+    const { timeMin, timeMax } = req.query;
+    const events = await listEvents(tokens, { timeMin, timeMax });
     res.json({ events });
   } catch (err) {
     console.error('Failed to fetch events:', err);

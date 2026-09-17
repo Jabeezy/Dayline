@@ -1,7 +1,14 @@
-const API =  `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api`;
+const API = `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api`;
 
 export async function fetchTodayEvents() {
-  const res = await fetch(`${API}/calendar/today`, { credentials: 'include' });
+  // Computed in the browser, so this is the user's actual local "today" —
+  // not the server's, which runs in UTC and would otherwise disagree.
+  const now = new Date();
+  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0).toISOString();
+  const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999).toISOString();
+  const params = new URLSearchParams({ timeMin: startOfDay, timeMax: endOfDay });
+
+  const res = await fetch(`${API}/calendar/today?${params}`, { credentials: 'include' });
   if (res.status === 401) return { connected: false, events: [] };
   if (!res.ok) throw new Error('Failed to load calendar events');
   const data = await res.json();
