@@ -4,6 +4,7 @@ import cors from 'cors';
 import { authRouter } from './routes/auth.js';
 import { calendarRouter } from './routes/calendar.js';
 import { tasksRouter } from './routes/tasks.js';
+import { assistantRouter } from './routes/assistant.js';
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(express.json());
 app.use('/api/auth', authRouter);
 app.use('/api/calendar', calendarRouter);
 app.use('/api/tasks', tasksRouter);
+app.use('/api/assistant', assistantRouter);
 
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 

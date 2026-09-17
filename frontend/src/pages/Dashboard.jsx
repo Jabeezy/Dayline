@@ -4,6 +4,7 @@ import Agenda from '../components/Agenda.jsx';
 import Tasks from '../components/Tasks.jsx';
 import QuickCapture from '../components/QuickCapture.jsx';
 import AddEvent from '../components/AddEvent.jsx';
+import AskSearch from '../components/AskSearch.jsx';
 import ComingSoon from '../components/ComingSoon.jsx';
 import { fetchTodayEvents, fetchUpcomingEvents, googleConnectUrl } from '../lib/api.js';
 
@@ -121,12 +122,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        {activeView === 'ask' && (
-          <ComingSoon
-            title="Ask / Search"
-            note="This is Phase 3 — the Claude API assistant layer that lets you ask Dayline questions across your calendar, tasks, and notes. Not wired up yet."
-          />
-        )}
+        {activeView === 'ask' && <AskSearch />}
 
         {activeView === 'health' && (
           <ComingSoon

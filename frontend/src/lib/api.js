@@ -83,3 +83,18 @@ export async function deleteTask(id) {
   const res = await fetch(`${API}/tasks/${id}`, { method: 'DELETE' });
   if (!res.ok) throw new Error('Failed to delete task');
 }
+
+export async function askAssistant(question) {
+  const res = await fetch(`${API}/assistant/ask`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ question }),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    // Surface the backend's specific message (e.g. "temporarily busy")
+    // instead of a generic failure.
+    throw new Error(data.error || 'Failed to get a response');
+  }
+  return data.answer;
+}
